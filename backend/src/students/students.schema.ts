@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { Class } from '../class/class.schema'; // Importamos el modelo Class para la referencia
+import { Class } from '../class/class.schema';
 
 @Schema()
 export class Student extends Document {
@@ -14,15 +14,14 @@ export class Student extends Document {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true, unique: true, min: 1, max: 999999 })
-  studentNumber: number;
+  @Prop({ required: true, unique: true })
+  id: string;
 
   @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: Class.name,
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Class.name }],
     required: false,
   })
-  class?: Class | string;
+  classIds?: (Class | string)[];
 }
 
 export const StudentSchema = SchemaFactory.createForClass(Student);

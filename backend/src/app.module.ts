@@ -5,13 +5,15 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { StudentsModule } from './students/students.module';
 import { ClassModule } from './class/class.module';
+import { CountersModule } from './counters/counters.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
-    StudentsModule,
     ClassModule,
+    CountersModule,
+    StudentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

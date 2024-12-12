@@ -10,6 +10,6 @@ import { Class, ClassSchema } from './class.schema';
   ],
   controllers: [ClassController],
   providers: [ClassService],
-  exports: [ClassService],
+  exports: [ClassService, MongooseModule],
 })
 export class ClassModule {}

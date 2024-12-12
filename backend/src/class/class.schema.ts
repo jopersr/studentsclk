@@ -6,7 +6,7 @@ export class Class extends Document {
   @Prop({ required: true })
   className: string;
 
-  @Prop({ required: true, min: 0, max: 99 })
+  @Prop({ required: true, min: 1900 })
   year: number;
 }
 

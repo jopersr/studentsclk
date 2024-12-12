@@ -1,11 +1,4 @@
-import {
-  IsString,
-  IsEmail,
-  IsNumber,
-  Max,
-  Min,
-  IsOptional,
-} from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateStudentDto {
@@ -21,12 +14,6 @@ export class CreateStudentDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 123456 })
-  @IsNumber()
-  @Min(1)
-  @Max(999999)
-  studentNumber: number;
-
   @ApiProperty({
     example: '60c72b2f5f1b2c001c8e4a2b',
     required: false,
@@ -34,7 +21,7 @@ export class CreateStudentDto {
   })
   @IsOptional()
   @IsString()
-  class?: string;
+  classIds?: string[];
 }
 
 export class UpdateStudentDto {
@@ -54,13 +41,10 @@ export class UpdateStudentDto {
   email?: string;
 
   @ApiProperty({ example: 123456, required: false })
-  @IsOptional()
-  @Min(1)
-  @Max(999999)
-  studentNumber?: number;
+  id: string;
 
   @ApiProperty({ example: '60c72b2f5f1b2c001c8e4a2b', required: false })
   @IsOptional()
-  @IsString()
-  class?: string;
+  @IsArray()
+  classIds?: string;
 }

@@ -1,4 +1,15 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #c4c1c1;
+}
+
 #root {
+  height: 100vh;
+}
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -39,4 +50,4 @@
 
 .read-the-docs {
   color: #888;
-}
+} */
