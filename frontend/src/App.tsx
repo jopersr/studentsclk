@@ -67,8 +67,7 @@ console.log('classes', classes);
     <>
      <Paper 
         elevation={3} 
-        style={{ 
-          // padding: '20px', 
+        style={{           
           margin: '20px',     
           overflow: 'auto',
           backgroundColor: '#f5f5f5',
@@ -111,7 +110,6 @@ console.log('classes', classes);
           backgroundColor: '#f5f5f5',
           borderRadius: '10px'
         }}
-
       >
         <UsersGallery users={students} onEdit={(id) => console.log('edit', id)} onDelete={(id) => console.log('delete', id)}/>    
       </Paper>

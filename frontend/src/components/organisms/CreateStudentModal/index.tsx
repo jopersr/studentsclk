@@ -7,9 +7,11 @@ import {
   IconButton,
   TextField,
   Button,
-  Box,
-  Chip,
-  Autocomplete
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Box
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useForm, Controller } from 'react-hook-form';
@@ -44,7 +46,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
       firstName: '',
       lastName: '',
       email: '',      
-      classIds: [],
+      classId: '',
     }
   });
 
@@ -122,7 +124,28 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
               />
             )}
           />
-         <Controller
+          <Controller
+            name="classId"
+            control={control}
+            // rules={{ required: 'Class is required' }}
+            render={({ field }) => (
+              <FormControl fullWidth error={!!errors.classId}>
+                <InputLabel>Class</InputLabel>
+                <Select
+                  {...field}
+                  label="Class"
+                  variant='standard'
+                >
+                  {classesOptions.map((cls) => (
+                    <MenuItem key={cls.id} value={cls.id}>
+                      {cls.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          />
+           {/* <Controller
           name="classIds"
           control={control}
           defaultValue={[]}
@@ -145,7 +168,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
               renderInput={(params) => <TextField {...params} label="Classes" variant='standard'/>}
             />
           )}
-        />
+        /> */}
         </Box>
       </DialogContent>
       

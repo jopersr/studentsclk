@@ -37,7 +37,7 @@ const EmailText = styled(Typography)({
 
 const ActionsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
-  gap: 0,//theme.spacing(0),
+  gap: 0,
 }));
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({

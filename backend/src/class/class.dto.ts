@@ -2,7 +2,7 @@ import { IsString, IsNumber, Max, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateClassDto {
-  @ApiProperty({ example: 'Physics 101' })
+  @ApiProperty({ example: 'Physics' })
   @IsString()
   className: string;
 
@@ -17,7 +17,7 @@ export class CreateClassDto {
 }
 
 export class UpdateClassDto {
-  @ApiProperty({ example: 'Physics 101', required: false })
+  @ApiProperty({ example: 'Physics', required: false })
   @IsString()
   className?: string;
 

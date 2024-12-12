@@ -13,7 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useForm, Controller } from 'react-hook-form';
 
 interface CreateClassFormData {
-  name: string;
+  className: string;
   year: number;
 }
 
@@ -55,8 +55,7 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ open, onClose, onSu
       </Box>
 
       <DialogContent dividers>
-        <Box component="form" noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {/* Class Name */}
+        <Box component="form" noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>          
           <Controller
             name="className"
             control={control}
@@ -65,20 +64,19 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ open, onClose, onSu
               <TextField
                 {...field}
                 label="Name"
-                error={!!errors.name}
-                helperText={errors.name?.message}
+                error={!!errors.className}
+                helperText={errors.className?.message}
                 variant='standard'
               />
             )}
           />
-
-          {/* Year */}
           <Controller
             name="year"
             control={control}
             rules={{
               required: 'Year is required',
-              min: { value: 1900, message: 'Year must be greater or equal to 1900' },              
+              min: { value: 0, message: 'Year must be greater or equal to 0' },
+              max: { value: 99, message: 'Year must be less than 100' },
             }}
             render={({ field }) => (
               <TextField
