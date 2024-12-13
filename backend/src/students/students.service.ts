@@ -15,7 +15,6 @@ export class StudentsService {
   ) {}
 
   async create(data: CreateStudentDto): Promise<Student> {
-    console.log(data);
     const sequenceValue =
       await this.countersService.getNextSequenceValue('studentCounter');
     const paddedId = sequenceValue.toString().padStart(6, '0');
@@ -47,9 +46,17 @@ export class StudentsService {
   }
 
   async findAll(): Promise<Student[]> {
-    const students = await this.studentModel.find().populate('classIds').exec();
+    const students = await this.studentModel.find().exec();
 
-    return students;
+    return students.map((student) => {
+      return {
+        id: student.id,
+        firstName: student.firstName,
+        lastName: student.lastName,
+        email: student.email,
+        classIds: student.classIds,
+      } as Student;
+    });
   }
 
   async findOne(id: string): Promise<Student> {
@@ -65,8 +72,7 @@ export class StudentsService {
 
   async update(id: string, changes: UpdateStudentDto): Promise<Student> {
     const student = await this.studentModel
-      .findByIdAndUpdate(id, changes, { new: true })
-      .populate('classIds')
+      .findOneAndUpdate({ id }, changes, { new: true })
       .exec();
 
     if (!student) {
@@ -76,7 +82,7 @@ export class StudentsService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.studentModel.findByIdAndDelete(id).exec();
+    const result = await this.studentModel.findOneAndDelete({ id }).exec();
     if (!result) {
       throw new NotFoundException(`Student with id ${id} not found`);
     }

@@ -46,5 +46,5 @@ export class UpdateStudentDto {
   @ApiProperty({ example: '60c72b2f5f1b2c001c8e4a2b', required: false })
   @IsOptional()
   @IsArray()
-  classIds?: string;
+  classIds?: string[];
 }

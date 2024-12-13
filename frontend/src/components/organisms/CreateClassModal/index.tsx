@@ -11,20 +11,16 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useForm, Controller } from 'react-hook-form';
-
-interface CreateClassFormData {
-  className: string;
-  year: number;
-}
+import { ClassFormData } from '../../../utils/types';
 
 interface CreateClassModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateClassFormData) => void;
+  onSubmit: (data: ClassFormData) => void;
 }
 
 const CreateClassModal: React.FC<CreateClassModalProps> = ({ open, onClose, onSubmit }) => {
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<CreateClassFormData>({
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<ClassFormData>({
     defaultValues: {
       className: '',
       year: undefined,
@@ -36,7 +32,7 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ open, onClose, onSu
     onClose();
   };
 
-  const handleFormSubmit = (data: CreateClassFormData) => {
+  const handleFormSubmit = (data: ClassFormData) => {
     onSubmit(data);
     reset();
   };

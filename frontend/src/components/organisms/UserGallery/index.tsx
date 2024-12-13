@@ -1,20 +1,14 @@
 import React from 'react';
 import { Grid2 } from '@mui/material';
 import UserCard from '../../molecules/UserCard';
-
-interface User {
-  firstName: string;
-  lastName: string;
-  email: string;
-  id: number;
-}
+import { StudentFormData } from '../../../utils/types';
 
 interface UsersGalleryProps {
-  users: User[];
-  onEdit?: (id: number) => void;
-  onDelete?: (id: number) => void;
+  users: StudentFormData[];
+  onEdit?: (student: StudentFormData) => void;
+  onDelete?: (id: string) => void;
 }
-// xs={12} sm={6} md={4} lg={3}
+
 const UsersGallery: React.FC<UsersGalleryProps> = ({ users, onEdit, onDelete }) => {
   return (
     <Grid2 
@@ -29,9 +23,9 @@ const UsersGallery: React.FC<UsersGalleryProps> = ({ users, onEdit, onDelete }) 
           <UserCard
             fullName={`${user.firstName} ${user.lastName}`}
             email={user.email}
-            id={user.id}
-            onEdit={() => onEdit?.(user.id)}
-            onDelete={() => onDelete?.(user.id)}
+            id={user.id || ''}
+            onEdit={onEdit ? () => onEdit(user) : undefined}
+            onDelete={onDelete ? () => onDelete(user.id || '') : undefined}
           />
         </Grid2>
       ))}

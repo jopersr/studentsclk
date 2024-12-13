@@ -68,8 +68,7 @@ const ManageClassesModal: React.FC<ManageClassesModalProps> = ({
     if (!searchTerm) return classesList;
     return classesList.filter(cls => cls.name.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [searchTerm, classesList]);
-
-  console.log('classesList', classesList);
+  
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <Box sx={{ position: 'relative', paddingRight: '48px' }}>

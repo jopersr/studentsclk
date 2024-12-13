@@ -5,16 +5,21 @@ import HeaderMenu from './components/organisms/HeaderMenu';
 import UsersGallery from './components/organisms/UserGallery';
 import CreateClassModal from './components/organisms/CreateClassModal';
 import ManageClassesModal from './components/organisms/ManageClassModal';
-import { createClass, createStudent, fetchClasses, fetchStudents } from './utils/api';
+import { createClass, createStudent, deleteStudent, fetchClasses, fetchStudents, updateStudent } from './utils/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, LinearProgress, Paper } from '@mui/material';
 import { useSnackbar } from 'notistack';
+import { Class, StudentFormData } from './utils/types';
+import ConfirmDialog from './components/molecules/ConfirmDialog';
 
 
 function App() {  
 const [openCreateStudentModal, setOpenCreateStudentModal] = useState(false);
+const [editingStudent, setEditingStudent] = useState<null | StudentFormData>(null);
 const [openCreateClassModal, setOpenCreateClassModal] = useState(false);
 const [openManageClassesModal, setOpenManageClassesModal] = useState(false);
+const [openConfirm, setOpenConfirm] = useState(false);
+const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
 const queryClient = useQueryClient();
 const { enqueueSnackbar } = useSnackbar();
 
@@ -38,8 +43,37 @@ const { mutate: createStudentMutate, isLoading: isCreating } = useMutation({
   }
 });
 
-const handleCreateStudentSubmit = (formData: any) => {
-  createStudentMutate(formData);
+const { mutate: updateStudentMutate, isLoading: isUpdating } = useMutation({
+  mutationFn: updateStudent,
+  onSuccess: () => {    
+    queryClient.invalidateQueries({ queryKey: ['students'] });    
+    setOpenCreateStudentModal(false);
+    enqueueSnackbar('Student updated successfully.', { variant: 'success' });
+  },
+  onError: (err) => {
+    console.error('Error creating student:', err);    
+    enqueueSnackbar('Failed to update student. Please try again.', { variant: 'error' });
+  }
+});
+
+const handleCreateStudent = () => {
+  setEditingStudent(null);
+  setOpenCreateStudentModal(true);
+};
+
+const handleEditStudent = (student: StudentFormData) => {
+  setEditingStudent(student);
+  setOpenCreateStudentModal(true);
+};
+
+const handleStudentSubmit = (data: StudentFormData) => {
+  if (editingStudent && editingStudent.id) {
+    // Llamar a updateStudentMutate
+    updateStudentMutate({ id: editingStudent.id, data });
+  } else {
+    // Llamar a createStudentMutate
+    createStudentMutate(data);
+  }
 };
 
 const { mutate: createClassMutate, isLoading: isCreatingClass } = useMutation({
@@ -55,13 +89,46 @@ const { mutate: createClassMutate, isLoading: isCreatingClass } = useMutation({
   }
 });
 
+const { mutate: deleteStudentMutate } = useMutation({
+  mutationFn: deleteStudent,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['students']});
+    enqueueSnackbar('Student deleted successfully.', { variant: 'success' });
+  },
+  onError: (err) => {
+    console.error('Error deleting student:', err);
+    enqueueSnackbar('Failed to delete student. Please try again.', { variant: 'error' });
+  },
+});
+
+const handleDeleteStudent = (id: string) => {
+  deleteStudentMutate(id);
+};
+
+const handleDeleteClick = (id: string) => {
+  setSelectedStudentId(id);
+  setOpenConfirm(true);
+};
+
+const handleConfirmDelete = () => {
+  if (selectedStudentId) {
+    deleteStudentMutate(selectedStudentId);
+  }
+  setOpenConfirm(false);
+  setSelectedStudentId(null);
+};
+
+const handleCancelDelete = () => {
+  setOpenConfirm(false);
+  setSelectedStudentId(null);
+};
+
 if (isLoading) return (<div>
  <div>Loading students...</div>
  <LinearProgress />
 </div>);
-if (error) return <Alert severity='error' >Error loading students.</Alert>;
 
-console.log('classes', classes);
+if (error) return <Alert severity='error' >Error loading students.</Alert>;
 
   return (
     <>
@@ -73,20 +140,19 @@ console.log('classes', classes);
           backgroundColor: '#f5f5f5',
           borderRadius: '10px'
         }}
-
       >
-
       <HeaderMenu 
-        onCreateStudent={() => setOpenCreateStudentModal(true)} 
+        onCreateStudent={handleCreateStudent} 
         onCreateClass={() => setOpenCreateClassModal(true)} 
         onManageClasses={() => setOpenManageClassesModal(true)}
       />
       </Paper>
       <CreateStudentModal 
-      open={openCreateStudentModal} 
-      onSubmit={handleCreateStudentSubmit} 
-      onClose={() => setOpenCreateStudentModal(false)} 
-      classesOptions={classes.map((c: any) => ({ id: c._id, name: c.className }))}
+        open={openCreateStudentModal} 
+        onSubmit={handleStudentSubmit} 
+        onClose={() => setOpenCreateStudentModal(false)} 
+        classesOptions={classes.map((c: Class) => ({ id: c._id, name: c.className }))}
+        student={editingStudent}
       />
       <CreateClassModal 
         open={openCreateClassModal}
@@ -96,9 +162,16 @@ console.log('classes', classes);
       <ManageClassesModal
         open={openManageClassesModal}
         onClose={() => setOpenManageClassesModal(false)}
-        classesList={classes.map((c: any) => ({ id: c._id, name: c.className }))}
+        classesList={classes.map((c: Class) => ({ id: c._id, name: c.className }))}
         onEditClass={(id) => console.log('edit', id)}
         onDeleteClass={(id) => console.log('delete', id)}
+      />
+       <ConfirmDialog 
+        open={openConfirm} 
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Delete Student"
+        message="This action is irreversible. Are you sure you want to delete this student?"
       />
      <Paper 
         elevation={3} 
@@ -111,7 +184,7 @@ console.log('classes', classes);
           borderRadius: '10px'
         }}
       >
-        <UsersGallery users={students} onEdit={(id) => console.log('edit', id)} onDelete={(id) => console.log('delete', id)}/>    
+        <UsersGallery users={students} onEdit={handleEditStudent} onDelete={handleDeleteClick}/>    
       </Paper>
     </>
   )

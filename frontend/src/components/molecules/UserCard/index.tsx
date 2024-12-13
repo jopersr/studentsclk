@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 interface UserCardProps {
   fullName: string;
   email: string;
-  id: number;
+  id: string;
   onEdit?: () => void;
   onDelete?: () => void;
 }

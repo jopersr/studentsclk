@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -7,56 +7,59 @@ import {
   IconButton,
   TextField,
   Button,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Box
+  Box,
+  Autocomplete,
+  Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useForm, Controller } from 'react-hook-form';
-
-interface ClassOption {
-  id: string;
-  name: string;
-}
-
-interface CreateStudentFormData {
-  firstName: string;
-  lastName: string;
-  email: string;  
-  classIds: string[];
-}
-
-interface CreateStudentModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: CreateStudentFormData) => void;
-  classesOptions: ClassOption[];
-}
+import { CreateStudentModalProps } from './types';
+import { StudentFormData } from '../../../utils/types';
 
 const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
   open,
   onClose,
   onSubmit,
   classesOptions,
+  student,
 }) => {
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<CreateStudentFormData>({
+  
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<StudentFormData>({
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',      
-      classId: '',
-    }
+        firstName: '',
+        lastName: '',
+        email: '',
+        classIds: [],
+      }
   });
+
+  useEffect(() => {
+    if (student) {
+      console.log('Before reset student',student);
+      reset({
+        firstName: student.firstName,
+        lastName: student.lastName,
+        email: student.email,
+        classIds: student.classIds || [],
+        id: student.id,
+      });
+    } else {
+      // Si no hay student, asegúrate de resetear a los valores vacíos
+      reset({
+        firstName: '',
+        lastName: '',
+        email: '',
+        classIds: []
+      });
+    }
+  }, [student]);
 
   const handleClose = () => {
     reset();
     onClose();
   };
 
-  const handleFormSubmit = (data: CreateStudentFormData) => {
-    console.log(data);
+  const handleFormSubmit = (data: StudentFormData) => {    
     onSubmit(data);
     reset();
   };
@@ -64,7 +67,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <Box sx={{ position: 'relative', paddingRight: '48px' }}>
-        <DialogTitle>Create student</DialogTitle>
+        <DialogTitle>{`${student ? 'Edit' : 'Create'} student`}</DialogTitle>
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -73,7 +76,6 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
           <CloseIcon />
         </IconButton>
       </Box>
-
       <DialogContent dividers>
         <Box component="form" noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>          
           <Controller
@@ -123,52 +125,30 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                 variant='standard'
               />
             )}
-          />
-          <Controller
-            name="classId"
-            control={control}
-            // rules={{ required: 'Class is required' }}
+          />          
+           <Controller
+            name="classIds"
+            control={control}            
             render={({ field }) => (
-              <FormControl fullWidth error={!!errors.classId}>
-                <InputLabel>Class</InputLabel>
-                <Select
-                  {...field}
-                  label="Class"
-                  variant='standard'
-                >
-                  {classesOptions.map((cls) => (
-                    <MenuItem key={cls.id} value={cls.id}>
-                      {cls.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-          />
-           {/* <Controller
-          name="classIds"
-          control={control}
-          defaultValue={[]}
-          render={({ field }) => (
-            <Autocomplete
-              {...field}              
-              multiple
-              options={classesOptions}
-              getOptionLabel={(option) => option.name}
-              onChange={(e, value) => field.onChange(value.map((v) => v.id))}
-              value={classesOptions.filter((co) => field.value.includes(co.id))}
-              renderTags={(selected, getTagProps) =>
-                selected.map((option, index) => (
-                  <Chip
-                    label={option.name}
-                    {...getTagProps({ index })}
-                  />
-                ))
-              }
-              renderInput={(params) => <TextField {...params} label="Classes" variant='standard'/>}
+              <Autocomplete
+                {...field}              
+                multiple
+                options={classesOptions}
+                getOptionLabel={(option) => option.name}
+                onChange={(e, value) => field.onChange(value.map((v) => v.id))}
+                value={classesOptions.filter((co) => field.value.includes(co.id))}
+                renderTags={(selected, getTagProps) =>
+                  selected.map((option, index) => (
+                    <Chip
+                      label={option.name}
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                }
+                renderInput={(params) => <TextField {...params} label="Classes" variant='standard'/>}
             />
           )}
-        /> */}
+        />
         </Box>
       </DialogContent>
       
@@ -177,7 +157,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
           CANCEL
         </Button>
         <Button onClick={handleSubmit(handleFormSubmit)} variant="contained" color="primary">
-          CREATE
+          {student ? 'SAVE' : 'CREATE'}
         </Button>
       </DialogActions>
     </Dialog>
