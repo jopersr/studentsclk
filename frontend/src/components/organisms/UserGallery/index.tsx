@@ -2,8 +2,10 @@ import React from 'react';
 import { Grid2 } from '@mui/material';
 import UserCard from '../../molecules/UserCard';
 import { UsersGalleryProps } from './types';
+import UserCardSkeleton from '../../molecules/UserCardSkeleton';
 
-const UsersGallery: React.FC<UsersGalleryProps> = ({ users, onEdit, onDelete }) => {
+const UsersGallery: React.FC<UsersGalleryProps> = ({ users, onEdit, onDelete, isLoading }) => {
+  console.log('UsersGallery', isLoading);
   return (
     <Grid2 
       container 
@@ -12,6 +14,21 @@ const UsersGallery: React.FC<UsersGalleryProps> = ({ users, onEdit, onDelete }) 
       alignItems="flex-start"
       size={{xs: 12, sm:6, md: 4, lg:3 }}     
     >
+      {
+        isLoading && (
+          <>
+            <Grid2>
+              <UserCardSkeleton />
+            </Grid2>
+            <Grid2>
+              <UserCardSkeleton />
+            </Grid2>
+            <Grid2>
+              <UserCardSkeleton />
+            </Grid2>            
+          </>
+        )
+      }
       {users.map((user) => (
         <Grid2 key={user.id}>
           <UserCard

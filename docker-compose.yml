@@ -12,7 +12,6 @@ services:
       - mongo-data:/data/db
 
   backend:
-    build: ./backend
     image: jopersr/backend:latest
     container_name: backend
     environment:
@@ -23,7 +22,6 @@ services:
       - "3000:3000"
 
   frontend:
-    build: ./frontend
     image: jopersr/frontend:latest
     container_name: frontend
     depends_on:

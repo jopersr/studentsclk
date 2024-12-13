@@ -6,7 +6,7 @@ import ClassFormModal from './components/organisms/ClassFormModal';
 import ManageClassesModal from './components/organisms/ManageClassModal';
 import { createClass, createStudent, deleteClass, deleteStudent, fetchClasses, fetchStudents, updateClass, updateStudent } from './utils/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { LinearProgress, Paper } from '@mui/material';
+import { Grid2, LinearProgress, Paper } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { Class, ClassFormData, StudentFormData } from './utils/types';
 import ConfirmDialog from './components/molecules/ConfirmDialog';
@@ -14,6 +14,8 @@ import { ConfirmDialogProps } from './components/molecules/ConfirmDialog/types';
 import StudentFormModal from './components/organisms/StudentFormModal';
 import OneContainer from './components/atoms/OneConteiner';
 import EmptyState from './components/molecules/EmptyState';
+import UserCardSkeleton from './components/molecules/UserCardSkeleton';
+import UserSkeletonGallery from './components/organisms/UserSkeletonGallery';
 
 function App() {  
   const [openCreateStudentModal, setOpenCreateStudentModal] = useState(false);
@@ -255,17 +257,25 @@ function App() {
           backgroundColor: '#f5f5f5',
           borderRadius: '10px'
         }}
-      >
+      >        
         {
-          students && students.length > 0 ?
-           <UsersGallery users={students || []} onEdit={handleEditStudent} onDelete={handleStudentDeleteClick}/>  
-           : <OneContainer>
-            <EmptyState 
-              title="No students available" 
-              message="Get started by creating your first student" 
-              onCreateNew={handleCreateStudent}
-            />            
-           </OneContainer> 
+          isGlobalLoading ?
+           <UserSkeletonGallery />
+           :
+            students && students.length > 0?
+                <UsersGallery 
+                  users={students || []} 
+                  onEdit={handleEditStudent} 
+                  onDelete={handleStudentDeleteClick} 
+                  isLoading={isGlobalLoading}
+                />  
+              : <OneContainer>
+                  <EmptyState 
+                    title="No students available" 
+                    message="Get started by creating your first student" 
+                    onCreateNew={handleCreateStudent}
+                  />            
+                </OneContainer> 
         }
       </Paper>
     </>
