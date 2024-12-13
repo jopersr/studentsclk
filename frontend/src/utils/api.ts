@@ -10,19 +10,9 @@ export const fetchStudents = async () => {
   return data;
 };
 
-export const fetchClasses = async () => {
-  const { data } = await api.get('/classes');
-  return data;
-};
-
 export const createStudent = async (studentData: StudentFormData) => {
   const { data } = await api.post('/students', studentData);
   
-  return data;
-};
-
-export const createClass = async (classData: ClassFormData) => {
-  const { data } = await api.post('/classes', classData);
   return data;
 };
 
@@ -36,4 +26,23 @@ export const deleteStudent = async (id: string) => {
   return data;
 };
 
+export const fetchClasses = async () => {
+  const { data } = await api.get('/classes');
+  return data;
+};
+
+export const createClass = async (classData: ClassFormData) => {
+  const { data } = await api.post('/classes', classData);
+  return data;
+};
+
+export const updateClass = async ({ id, data }: { id: string, data: ClassFormData}) => {
+  const { data: updated } = await api.put(`/classes/${id}`, data);
+  return updated;
+};
+
+export const deleteClass = async (id: string) => {
+  await api.delete(`/classes/${id}`);
+  return id;
+};
 

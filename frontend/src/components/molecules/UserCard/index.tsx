@@ -1,48 +1,9 @@
 import React from 'react';
-import { Card, Avatar, Typography, Box, IconButton } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Avatar, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-interface UserCardProps {
-  fullName: string;
-  email: string;
-  id: string;
-  onEdit?: () => void;
-  onDelete?: () => void;
-}
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  borderRadius: '16px',
-  boxShadow: theme.shadows[1],
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(2),
-  width: '300px'
-}));
-
-const InfoContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  marginLeft: theme.spacing(2),
-  flexGrow: 1, 
-  overflow: 'hidden',
-}));
-
-const EmailText = styled(Typography)({
-  overflow: 'hidden',        
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',      
-});
-
-const ActionsContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  gap: 0,
-}));
-
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-  padding: '2px',
-}));
+import { ActionsContainer, EmailText, InfoContainer, StyledCard, StyledIconButton } from './styles';
+import { UserCardProps } from './types';
 
 const UserCard: React.FC<UserCardProps> = ({ fullName, email, id, onEdit, onDelete }) => {
   return (

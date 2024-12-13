@@ -1,13 +1,7 @@
 import React from 'react';
 import { Grid2 } from '@mui/material';
 import UserCard from '../../molecules/UserCard';
-import { StudentFormData } from '../../../utils/types';
-
-interface UsersGalleryProps {
-  users: StudentFormData[];
-  onEdit?: (student: StudentFormData) => void;
-  onDelete?: (id: string) => void;
-}
+import { UsersGalleryProps } from './types';
 
 const UsersGallery: React.FC<UsersGalleryProps> = ({ users, onEdit, onDelete }) => {
   return (

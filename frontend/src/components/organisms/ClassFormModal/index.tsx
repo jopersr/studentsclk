@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -12,20 +12,34 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useForm, Controller } from 'react-hook-form';
 import { ClassFormData } from '../../../utils/types';
+import { ClassFormModalProps } from './types';
 
-interface CreateClassModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: ClassFormData) => void;
-}
-
-const CreateClassModal: React.FC<CreateClassModalProps> = ({ open, onClose, onSubmit }) => {
+const ClassFormModal: React.FC<ClassFormModalProps> = ({ open, onClose, onSubmit, classData }) => {
   const { control, handleSubmit, formState: { errors }, reset } = useForm<ClassFormData>({
-    defaultValues: {
+    defaultValues: classData ? 
+    {
+      className: classData.className,
+      year: classData.year,
+    }
+    :{
       className: '',
       year: undefined,
     }
   });
+
+  useEffect(() => {
+    if (classData) {
+      reset({
+        className: classData.className,
+        year: classData.year,
+      });
+    } else {
+      reset({
+        className: '',
+        year: undefined,
+      });
+    }
+  } , [classData]);
 
   const handleClose = () => {
     reset();
@@ -40,7 +54,7 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ open, onClose, onSu
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <Box sx={{ position: 'relative', paddingRight: '48px' }}>
-        <DialogTitle>Create class</DialogTitle>
+        <DialogTitle>{`${classData ? 'Edit' : 'Create'} class`}</DialogTitle>
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -49,7 +63,6 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ open, onClose, onSu
           <CloseIcon />
         </IconButton>
       </Box>
-
       <DialogContent dividers>
         <Box component="form" noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>          
           <Controller
@@ -86,18 +99,17 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ open, onClose, onSu
             )}
           />
         </Box>
-      </DialogContent>
-      
+      </DialogContent>      
       <DialogActions >
         <Button onClick={handleClose} color="primary">
           CANCEL
         </Button>
         <Button onClick={handleSubmit(handleFormSubmit)} variant="contained" color="primary">
-          CREATE
+          {`${classData ? 'SAVE' : 'CREATE'}`}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default CreateClassModal;
+export default ClassFormModal;

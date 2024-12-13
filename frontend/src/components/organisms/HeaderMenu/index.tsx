@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Button, Drawer, Box, List, ListItemButton, ListItemText } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { HeaderMenuProps } from './types';
 
-interface HeaderMenuProps {
-  onCreateStudent?: () => void;
-  onCreateClass?: () => void;
-  onManageClasses?: () => void;
-}
+
 
 const HeaderMenu: React.FC<HeaderMenuProps> = ({ onCreateStudent, onCreateClass, onManageClasses }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);

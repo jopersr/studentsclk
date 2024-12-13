@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import './App.css'
-import CreateStudentModal from './components/organisms/CreateStudentModal';
+import CreateStudentModal from './components/organisms/StudentFormModal';
 import HeaderMenu from './components/organisms/HeaderMenu';
 import UsersGallery from './components/organisms/UserGallery';
-import CreateClassModal from './components/organisms/CreateClassModal';
+import CreateClassModal from './components/organisms/ClassFormModal';
 import ManageClassesModal from './components/organisms/ManageClassModal';
-import { createClass, createStudent, deleteStudent, fetchClasses, fetchStudents, updateStudent } from './utils/api';
+import { createClass, createStudent, deleteClass, deleteStudent, fetchClasses, fetchStudents, updateClass, updateStudent } from './utils/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, LinearProgress, Paper } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { Class, StudentFormData } from './utils/types';
+import { Class, ClassFormData, StudentFormData } from './utils/types';
 import ConfirmDialog from './components/molecules/ConfirmDialog';
+import ClassFormModal from './components/organisms/ClassFormModal';
+import { ConfirmDialogProps } from './components/molecules/ConfirmDialog/types';
+import OneContainer from './components/atoms/OneConteiner';
 
 
 function App() {  
@@ -18,8 +21,9 @@ const [openCreateStudentModal, setOpenCreateStudentModal] = useState(false);
 const [editingStudent, setEditingStudent] = useState<null | StudentFormData>(null);
 const [openCreateClassModal, setOpenCreateClassModal] = useState(false);
 const [openManageClassesModal, setOpenManageClassesModal] = useState(false);
-const [openConfirm, setOpenConfirm] = useState(false);
-const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+const [openEditClassModal, setOpenEditClassModal] = useState(false);
+const [editingClass, setEditingClass] = useState<Class | null>(null);
+const [confirmDialogState, setConfirmDialogState] = useState<ConfirmDialogProps>({ open: false, onConfirm: () => {}, onClose: () => {}, title: '', message: '' });
 const queryClient = useQueryClient();
 const { enqueueSnackbar } = useSnackbar();
 
@@ -56,6 +60,31 @@ const { mutate: updateStudentMutate, isLoading: isUpdating } = useMutation({
   }
 });
 
+const { mutate: updateClassMutate } = useMutation({
+  mutationFn: updateClass,
+  onSuccess: () => {
+    queryClient.invalidateQueries({queryKey: ['classes']});
+    enqueueSnackbar('Class updated successfully.', { variant: 'success' });
+    setOpenEditClassModal(false);
+  },
+  onError: (err) => {
+    console.error('Error updating class:', err);
+    enqueueSnackbar('Failed to update class. Please try again.', { variant: 'error' });
+  }
+});
+
+const { mutate: deleteClassMutate } = useMutation({
+  mutationFn: deleteClass, 
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['classes']});
+    enqueueSnackbar('Class deleted successfully.', { variant: 'success' });
+  },
+  onError: (err) => {
+    console.error('Error deleting class:', err);
+    enqueueSnackbar('Failed to delete class. Please try again.', { variant: 'error' });
+  }
+});
+
 const handleCreateStudent = () => {
   setEditingStudent(null);
   setOpenCreateStudentModal(true);
@@ -67,11 +96,9 @@ const handleEditStudent = (student: StudentFormData) => {
 };
 
 const handleStudentSubmit = (data: StudentFormData) => {
-  if (editingStudent && editingStudent.id) {
-    // Llamar a updateStudentMutate
+  if (editingStudent && editingStudent.id) {    
     updateStudentMutate({ id: editingStudent.id, data });
-  } else {
-    // Llamar a createStudentMutate
+  } else {    
     createStudentMutate(data);
   }
 };
@@ -101,37 +128,80 @@ const { mutate: deleteStudentMutate } = useMutation({
   },
 });
 
-const handleDeleteStudent = (id: string) => {
-  deleteStudentMutate(id);
+const handleConfirmStudentDelete = ( id : string) => {
+  console.log('confirm delete', id);
+  if (id) {
+    deleteStudentMutate(id);
+  }  
+  setConfirmDialogState((prev)=> {return { ...prev, open: false }});  
 };
 
-const handleDeleteClick = (id: string) => {
-  setSelectedStudentId(id);
-  setOpenConfirm(true);
-};
 
-const handleConfirmDelete = () => {
-  if (selectedStudentId) {
-    deleteStudentMutate(selectedStudentId);
-  }
-  setOpenConfirm(false);
-  setSelectedStudentId(null);
+const handleStudentDeleteClick = (id: string) => {  
+  setConfirmDialogState({
+    open: true,
+    onConfirm: () => handleConfirmStudentDelete(id),
+    onClose: handleCancelDelete,
+    title:"Delete Student",
+    message:"This action is irreversible. Are you sure you want to delete this student?"
+  });
 };
 
 const handleCancelDelete = () => {
-  setOpenConfirm(false);
-  setSelectedStudentId(null);
+  setConfirmDialogState((prev) => {return { ...prev, open: false }});  
 };
 
-if (isLoading) return (<div>
- <div>Loading students...</div>
- <LinearProgress />
-</div>);
+const handleEditClassClick = (cls: Class) => {
+  setEditingClass(cls);
+  setOpenEditClassModal(true);
+};
 
-if (error) return <Alert severity='error' >Error loading students.</Alert>;
+const handleClassSubmit = (data: ClassFormData) => {  
+  if (editingClass) {
+    updateClassMutate({ id: editingClass._id, data });
+  } else {
+    createClassMutate(data);
+  }
+};
+
+const handleConfirmClassDelete = (id: string) => {
+  if (id) {
+    deleteClassMutate(id);
+  }
+  setConfirmDialogState((prev) => { return { ...prev, open: false }});
+}
+
+const handleClassDeleteClick = (id: string) => {
+  setConfirmDialogState({
+    open: true,
+    onConfirm: () => handleConfirmClassDelete(id),
+    onClose: handleCancelDelete,
+    title:"Delete Class",
+    message:"This action is irreversible. Are you sure you want to delete this class?"
+  });
+}
+
+if (isLoading ) return (
+  <OneContainer>
+    <div>
+      <div>Loading students...</div>
+      <LinearProgress />
+    </div>
+  </OneContainer>
+);
+
+if (error) return (
+  <OneContainer>
+    <Alert severity='error'>      
+      The system is currently experiencing issues. 
+      <br />
+      Please try again later.
+    </Alert>
+  </OneContainer>
+) 
 
   return (
-    <>
+    <>    
      <Paper 
         elevation={3} 
         style={{           
@@ -153,7 +223,13 @@ if (error) return <Alert severity='error' >Error loading students.</Alert>;
         onClose={() => setOpenCreateStudentModal(false)} 
         classesOptions={classes.map((c: Class) => ({ id: c._id, name: c.className }))}
         student={editingStudent}
-      />
+      />   
+      <ClassFormModal
+        open={openEditClassModal}
+        onClose={() => setOpenEditClassModal(false)}
+        onSubmit={handleClassSubmit}
+        classData={editingClass}
+      />   
       <CreateClassModal 
         open={openCreateClassModal}
         onSubmit={createClassMutate}
@@ -162,17 +238,11 @@ if (error) return <Alert severity='error' >Error loading students.</Alert>;
       <ManageClassesModal
         open={openManageClassesModal}
         onClose={() => setOpenManageClassesModal(false)}
-        classesList={classes.map((c: Class) => ({ id: c._id, name: c.className }))}
-        onEditClass={(id) => console.log('edit', id)}
-        onDeleteClass={(id) => console.log('delete', id)}
+        classesList={classes}
+        onEditClass={handleEditClassClick}
+        onDeleteClass={handleClassDeleteClick}
       />
-       <ConfirmDialog 
-        open={openConfirm} 
-        onClose={handleCancelDelete}
-        onConfirm={handleConfirmDelete}
-        title="Delete Student"
-        message="This action is irreversible. Are you sure you want to delete this student?"
-      />
+       <ConfirmDialog {...confirmDialogState}/>
      <Paper 
         elevation={3} 
         style={{ 
@@ -184,7 +254,7 @@ if (error) return <Alert severity='error' >Error loading students.</Alert>;
           borderRadius: '10px'
         }}
       >
-        <UsersGallery users={students} onEdit={handleEditStudent} onDelete={handleDeleteClick}/>    
+        <UsersGallery users={students} onEdit={handleEditStudent} onDelete={handleStudentDeleteClick}/>    
       </Paper>
     </>
   )

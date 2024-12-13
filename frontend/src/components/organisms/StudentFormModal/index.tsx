@@ -16,7 +16,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { CreateStudentModalProps } from './types';
 import { StudentFormData } from '../../../utils/types';
 
-const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
+const StudentFormModal: React.FC<CreateStudentModalProps> = ({
   open,
   onClose,
   onSubmit,
@@ -34,8 +34,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
   });
 
   useEffect(() => {
-    if (student) {
-      console.log('Before reset student',student);
+    if (student) {      
       reset({
         firstName: student.firstName,
         lastName: student.lastName,
@@ -43,8 +42,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
         classIds: student.classIds || [],
         id: student.id,
       });
-    } else {
-      // Si no hay student, asegúrate de resetear a los valores vacíos
+    } else {      
       reset({
         firstName: '',
         lastName: '',
@@ -150,8 +148,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
           )}
         />
         </Box>
-      </DialogContent>
-      
+      </DialogContent>      
       <DialogActions >
         <Button onClick={handleClose} color="primary">
           CANCEL
@@ -164,4 +161,4 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
   );
 };
 
-export default CreateStudentModal;
+export default StudentFormModal;

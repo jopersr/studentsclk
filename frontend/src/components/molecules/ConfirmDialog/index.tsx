@@ -1,13 +1,7 @@
 import React from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { ConfirmDialogProps } from './types';
 
-interface ConfirmDialogProps {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title?: string;
-  message?: string;
-}
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ open, onClose, onConfirm, title = "Confirm", message = "Are you sure?" }) => {
   return (
