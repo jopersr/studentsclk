@@ -2,7 +2,7 @@ version: "3"
 services:
   mongo:
     image: mongo:latest
-    container_name: mongo_dev
+    container_name: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -10,6 +10,26 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    image: jopersr/backend:latest
+    container_name: backend
+    environment:
+      MONGODB_URI: "mongodb://root:password@mongo:27017/dbname?authSource=admin"
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build: ./frontend
+    image: jopersr/frontend:latest
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
 
 volumes:
   mongo-data:

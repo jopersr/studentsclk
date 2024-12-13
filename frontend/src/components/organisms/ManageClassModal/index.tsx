@@ -15,6 +15,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ManageClassesModalProps } from './types';
 import { ClassesContainer, ClassRow, SubHeader } from './styles';
+import EmptyState from '../../molecules/EmptyState';
+import OneContainer from '../../atoms/OneConteiner';
 
 const ManageClassesModal: React.FC<ManageClassesModalProps> = ({
   open,
@@ -56,7 +58,16 @@ const ManageClassesModal: React.FC<ManageClassesModalProps> = ({
         </SubHeader>
         <Box mt={2}>
           <ClassesContainer>
-            {filteredClasses.map(cls => (
+            {
+            filteredClasses.length === 0 ? (
+              <OneContainer>
+                <EmptyState
+                  title="No classes available"
+                  message="You can create a new class by click on Create Class button"
+                />                
+              </OneContainer>
+            ) :
+            filteredClasses.map(cls => (
               <ClassRow key={cls._id}>
                 <Typography variant="body1">{cls.className}</Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>

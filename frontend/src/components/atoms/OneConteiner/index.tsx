@@ -5,7 +5,7 @@ const OneContainer = ({ children }: { children: ReactNode }) =>
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
+    height: '100%',
     flexDirection: 'column'
   }}>
     {children}

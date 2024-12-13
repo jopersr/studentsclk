@@ -12,6 +12,8 @@ import { Class, ClassFormData, StudentFormData } from './utils/types';
 import ConfirmDialog from './components/molecules/ConfirmDialog';
 import { ConfirmDialogProps } from './components/molecules/ConfirmDialog/types';
 import StudentFormModal from './components/organisms/StudentFormModal';
+import OneContainer from './components/atoms/OneConteiner';
+import EmptyState from './components/molecules/EmptyState';
 
 function App() {  
   const [openCreateStudentModal, setOpenCreateStudentModal] = useState(false);
@@ -254,7 +256,17 @@ function App() {
           borderRadius: '10px'
         }}
       >
-        <UsersGallery users={students || []} onEdit={handleEditStudent} onDelete={handleStudentDeleteClick}/>    
+        {
+          students && students.length > 0 ?
+           <UsersGallery users={students || []} onEdit={handleEditStudent} onDelete={handleStudentDeleteClick}/>  
+           : <OneContainer>
+            <EmptyState 
+              title="No students available" 
+              message="Get started by creating your first student" 
+              onCreateNew={handleCreateStudent}
+            />            
+           </OneContainer> 
+        }
       </Paper>
     </>
   )

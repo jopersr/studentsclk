@@ -133,7 +133,7 @@ const StudentFormModal: React.FC<CreateStudentModalProps> = ({
                 multiple
                 options={classesOptions}
                 getOptionLabel={(option) => option.name}
-                onChange={(e, value) => field.onChange(value.map((v) => v.id))}
+                onChange={(_, value) => field.onChange(value.map((v) => v.id))}
                 value={classesOptions.filter((co) => field.value.includes(co.id))}
                 renderTags={(selected, getTagProps) =>
                   selected.map((option, index) => (
