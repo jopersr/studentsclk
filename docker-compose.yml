@@ -24,6 +24,8 @@ services:
   frontend:
     image: jopersr/frontend:latest
     container_name: frontend
+    environment:
+      VITE_BACKEND_URL: "http://localhost:3000"
     depends_on:
       - backend
     ports:
