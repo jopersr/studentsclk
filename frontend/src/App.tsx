@@ -6,7 +6,7 @@ import ClassFormModal from './components/organisms/ClassFormModal';
 import ManageClassesModal from './components/organisms/ManageClassModal';
 import { createClass, createStudent, deleteClass, deleteStudent, fetchClasses, fetchStudents, updateClass, updateStudent } from './utils/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Grid2, LinearProgress, Paper } from '@mui/material';
+import { LinearProgress, Paper } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { Class, ClassFormData, StudentFormData } from './utils/types';
 import ConfirmDialog from './components/molecules/ConfirmDialog';
@@ -14,7 +14,6 @@ import { ConfirmDialogProps } from './components/molecules/ConfirmDialog/types';
 import StudentFormModal from './components/organisms/StudentFormModal';
 import OneContainer from './components/atoms/OneConteiner';
 import EmptyState from './components/molecules/EmptyState';
-import UserCardSkeleton from './components/molecules/UserCardSkeleton';
 import UserSkeletonGallery from './components/organisms/UserSkeletonGallery';
 
 function App() {  
