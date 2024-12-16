@@ -2,7 +2,7 @@ import axios from 'axios';
 import {  ClassFormData, StudentFormData } from './types';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL, 
+  baseURL: `${window.location.origin.split(':')[0]}://${window.location.hostname}:3000`, 
 });
 
 export const fetchStudents = async () => {
